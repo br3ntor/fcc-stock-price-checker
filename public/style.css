@@ -1,0 +1,54 @@
+h1,
+h2,
+h3 {
+  font-family: Georgia;
+}
+
+body {
+  margin: 25px;
+  background-color: #efefef;
+}
+
+ul {
+  list-style: none;
+  font-family: Tahoma;
+  font-size: 18px;
+}
+
+ul li:before {
+  content: "✓";
+  font-weight: bold;
+  color: #1dcd4f;
+}
+
+li {
+  margin: 5px 0;
+}
+
+code {
+  font-family: Verdana;
+}
+
+button {
+  font-size: 16px;
+  padding: 5px;
+  margin-top: 10px;
+}
+
+input[type="checkbox"] {
+  transform: scale(1.5);
+}
+
+input[type="text"] {
+  font-size: 18px;
+  padding: 5px;
+}
+
+form#testForm2,
+#testForm {
+  font-size: 18px;
+}
+
+#testForm > button {
+  margin-bottom: 20px;
+}
