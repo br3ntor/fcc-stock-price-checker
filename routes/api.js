@@ -32,11 +32,18 @@ module.exports = function(app) {
 
       const like = req.query.like;
       const voteIp = like ? ip : false;
+      
+      // Handle edge case of two same stocks being compared
+      if (Array.isArray(stock)) {
+        if (stock[0] === stock[1]) {
+          return res.send('Please enter two DIFFERNT stocks. Thanks you.');
+        }
+      }
 
       // Get quote for stock
       stockAPI(stock)
-        .then(data => {
-          // Handle one stock
+        .then(data => {        
+          // Handle one stock          
           if (!Array.isArray(data)) {
             dbController.findOne(data.symbol).then(doc => {
               const validVoteIp = doc && !doc.stockData.voters.includes(ip) && like ? ip : false;
@@ -69,8 +76,8 @@ module.exports = function(app) {
             });
 
             // Handle two stocks
-          } else {
-            dbController.findTwo(data).then(docs => {
+          } else {            
+            dbController.findTwo(data).then(docs => {              
               if (docs.length === 0) {
                 console.log('Neither stock in database');
                 dbController.insertMany(data, voteIp).then(r => {
@@ -84,7 +91,8 @@ module.exports = function(app) {
                 const stockInDB = docs[0].stockData.stock === data[0].symbol ? data[0] : data[1];
                 const stockNotInDB = docs[0].stockData.stock === data[0].symbol ? data[1] : data[0];
                 const validVoteIp = !docs[0].stockData.voters.includes(ip) && like ? ip : false;
-
+                
+                // Need to check if stocks are the same and either compare them or say they are the same                
                 Promise.all([
                   dbController.updateOne(stockInDB, validVoteIp),
                   dbController.insertOne(stockNotInDB, voteIp)
@@ -116,6 +124,9 @@ module.exports = function(app) {
                     });
                   }
                 });
+              }
+              if (docs.length > 2) {
+                res.send("One of the stocks is duplicated in the db!");
               }
             });
           }
